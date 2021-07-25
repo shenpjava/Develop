@@ -7,3 +7,5 @@
 #### 书籍
 - SQL Server
   - [Microsoft SQL Server 2008:T-SQL基础](./T-SQL基础/T-SQL基础.md)
+
+  - [Microsoft SQL Server 2008:T-SQL查询](./T-SQL查询/T-SQL查询.md)
