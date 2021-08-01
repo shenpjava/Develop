@@ -60,8 +60,147 @@
   ```SQL
     ALTER TABLE dbo.Tab DROP CONSTRAINT PK_Tab
   ```  
+  - 主键约束
+  ```SQL
+    SELECT
+    tab.name AS [表名],
+    idx.name AS [主键名称],
+    col.name AS [主键列名]
+    FROM
+    sys.indexes idx
+    JOIN sys.index_columns idxCol
+    ON (idx.object_id = idxCol.object_id
+        AND idx.index_id = idxCol.index_id
+        AND idx.is_primary_key = 1)
+    JOIN sys.tables tab
+    ON (idx.object_id = tab.object_id)
+    JOIN sys.columns col
+    ON (idx.object_id = col.object_id
+        AND idxCol.column_id = col.column_id);
+  ```
+
+  - 唯一约束
+  ```SQL
+  SELECT
+    tab.name AS [表名],
+    idx.name AS [约束名称],
+    col.name AS [约束列名]
+  FROM
+  sys.indexes idx
+    JOIN sys.index_columns idxCol
+      ON (idx.object_id = idxCol.object_id
+          AND idx.index_id = idxCol.index_id
+          AND idx.is_unique_constraint = 1)
+    JOIN sys.tables tab
+      ON (idx.object_id = tab.object_id)
+    JOIN sys.columns col
+      ON (idx.object_id = col.object_id
+          AND idxCol.column_id = col.column_id);
+  ```
+
+  - 外键约束
+  ```SQL
+  select
+  oSub.name  AS  [子表名称],
+  fk.name AS  [外键名称],
+  SubCol.name AS [子表列名],
+  oMain.name  AS  [主表名称],
+  MainCol.name AS [主表列名]
+  from
+  sys.foreign_keys fk  
+    JOIN sys.all_objects oSub  
+        ON (fk.parent_object_id = oSub.object_id)
+    JOIN sys.all_objects oMain
+        ON (fk.referenced_object_id = oMain.object_id)
+    JOIN sys.foreign_key_columns fkCols
+        ON (fk.object_id = fkCols.constraint_object_id)
+    JOIN sys.columns SubCol
+        ON (oSub.object_id = SubCol.object_id  
+            AND fkCols.parent_column_id = SubCol.column_id)
+    JOIN sys.columns MainCol
+        ON (oMain.object_id = MainCol.object_id  
+            AND fkCols.referenced_column_id = MainCol.column_id)
+  ```
+
+  - 表被哪些外键引用
+  ```SQL
+    select
+    fk.name,
+    fk.object_id,
+    OBJECT_NAME(fk.parent_object_id) as referenceTableName
+    from sys.foreign_keys as fk
+    join sys.objects as o on fk.referenced_object_id=o.object_id
+    where o.name='被引用的表名'
+  ```
+
+  - Check约束
+  ```SQL
+  SELECT
+    tab.name AS [表名],
+    chk.name AS [Check约束名],
+    col.name AS [列名],
+    chk.definition
+  FROM
+    sys.check_constraints chk
+      JOIN sys.tables tab
+        ON (chk.parent_object_id = tab.object_id)
+      JOIN sys.columns col
+        ON (chk.parent_object_id = col.object_id
+            AND chk.parent_column_id = col.column_id)
+  ```
 
 - 索引
+  ```SQL
+  SELECT CASE
+           WHEN t.[type] = 'U' THEN
+               '表'
+           WHEN t.[type] = 'V' THEN
+               '视图'
+       END AS '类型',
+       SCHEMA_NAME(t.schema_id) + '.' + t.[name] AS '(表/视图)名称',
+       i.[name] AS 索引名称,
+       SUBSTRING(column_names, 1, LEN(column_names) - 1) AS '列名',
+       CASE
+           WHEN i.[type] = 1 THEN
+               '聚集索引'
+           WHEN i.[type] = 2 THEN
+               '非聚集索引'
+           WHEN i.[type] = 3 THEN
+               'XML索引'
+           WHEN i.[type] = 4 THEN
+               '空间索引'
+           WHEN i.[type] = 5 THEN
+               '聚簇列存储索引'
+           WHEN i.[type] = 6 THEN
+               '非聚集列存储索引'
+           WHEN i.[type] = 7 THEN
+               '非聚集哈希索引'
+       END AS '索引类型',
+       CASE
+           WHEN i.is_unique = 1 THEN
+               '唯一'
+           ELSE
+               '不唯一'
+       END AS '索引是否唯一'
+  FROM sys.objects t
+    INNER JOIN sys.indexes i
+        ON t.object_id = i.object_id
+    CROSS APPLY
+  (
+    SELECT col.[name] + ', '
+    FROM sys.index_columns ic
+        INNER JOIN sys.columns col
+            ON ic.object_id = col.object_id
+               AND ic.column_id = col.column_id
+    WHERE ic.object_id = t.object_id
+          AND ic.index_id = i.index_id
+    ORDER BY col.column_id
+    FOR XML PATH('')
+  ) D(column_names)
+  WHERE t.is_ms_shipped <> 1
+      AND index_id > 0
+  ORDER BY i.[name]
+  ```
 
 - 临时表
   - 判别存在
