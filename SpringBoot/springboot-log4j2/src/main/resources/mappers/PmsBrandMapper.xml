@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shenp.mapper.PmsBrandMapper">
+    <resultMap id="BaseResultMap" type="com.shenp.entity.PmsBrand">
+        <!--@mbg.generated-->
+        <!--@Table pms_brand-->
+        <result column="id" jdbcType="BIGINT" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="first_letter" jdbcType="VARCHAR" property="firstLetter"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="factory_status" jdbcType="INTEGER" property="factoryStatus"/>
+        <result column="show_status" jdbcType="INTEGER" property="showStatus"/>
+        <result column="product_count" jdbcType="INTEGER" property="productCount"/>
+        <result column="product_comment_count" jdbcType="INTEGER" property="productCommentCount"/>
+        <result column="logo" jdbcType="VARCHAR" property="logo"/>
+        <result column="big_pic" jdbcType="VARCHAR" property="bigPic"/>
+        <result column="brand_story" jdbcType="VARCHAR" property="brandStory"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, [name], first_letter, sort, factory_status, show_status, product_count
+    </sql>
+    <select id="listAllBrand" parameterType="com.shenp.entity.PmsBrand" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List">
+        </include>
+        from pms_brand with (nolock)
+    </select>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.shenp.entity.PmsBrand"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into pms_brand ([name], first_letter, sort,
+                               factory_status, show_status, product_count,
+                               product_comment_count, logo, big_pic,
+                               brand_story)
+        values (#{name,jdbcType=VARCHAR}, #{firstLetter,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER},
+                #{factoryStatus,jdbcType=INTEGER}, #{showStatus,jdbcType=INTEGER}, #{productCount,jdbcType=INTEGER},
+                #{productCommentCount,jdbcType=INTEGER}, #{logo,jdbcType=VARCHAR}, #{bigPic,jdbcType=VARCHAR},
+                #{brandStory,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.shenp.entity.PmsBrand"
+            useGeneratedKeys="true">
+        <!--@mbg.generated-->
+        insert into pms_brand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                [name],
+            </if>
+            <if test="firstLetter != null">
+                first_letter,
+            </if>
+            <if test="sort != null">
+                sort,
+            </if>
+            <if test="factoryStatus != null">
+                factory_status,
+            </if>
+            <if test="showStatus != null">
+                show_status,
+            </if>
+            <if test="productCount != null">
+                product_count,
+            </if>
+            <if test="productCommentCount != null">
+                product_comment_count,
+            </if>
+            <if test="logo != null">
+                logo,
+            </if>
+            <if test="bigPic != null">
+                big_pic,
+            </if>
+            <if test="brandStory != null">
+                brand_story,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="firstLetter != null">
+                #{firstLetter,jdbcType=VARCHAR},
+            </if>
+            <if test="sort != null">
+                #{sort,jdbcType=INTEGER},
+            </if>
+            <if test="factoryStatus != null">
+                #{factoryStatus,jdbcType=INTEGER},
+            </if>
+            <if test="showStatus != null">
+                #{showStatus,jdbcType=INTEGER},
+            </if>
+            <if test="productCount != null">
+                #{productCount,jdbcType=INTEGER},
+            </if>
+            <if test="productCommentCount != null">
+                #{productCommentCount,jdbcType=INTEGER},
+            </if>
+            <if test="logo != null">
+                #{logo,jdbcType=VARCHAR},
+            </if>
+            <if test="bigPic != null">
+                #{bigPic,jdbcType=VARCHAR},
+            </if>
+            <if test="brandStory != null">
+                #{brandStory,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>
