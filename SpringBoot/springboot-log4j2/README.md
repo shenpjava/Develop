@@ -27,7 +27,7 @@
     <dependency>
         <groupId>com.lmax</groupId>
         <artifactId>disruptor</artifactId>
-        <version>${springfox.version}</version>
+        <version>${disruptor.version}</version>
     </dependency>
 
     <!--  SMTP  -->
